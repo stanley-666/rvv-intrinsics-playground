@@ -18,7 +18,7 @@ set(RVV_ABI "lp64d" CACHE STRING "RISC-V ABI string passed to -mabi")
 set(RVV_OPT_LEVEL "3" CACHE STRING "Optimization level")
 set(RVV_LINK_STATIC ON CACHE BOOL "Link statically so binaries can run on spike pk")
 set(BENCHMARK_REPEAT "1024" CACHE STRING "How many times each kernel is repeated")
-set(RVV_BENCHMARKS "vector_add_f32;saxpy_f32;reduce_sum_f32;mask_select_i32;slide1down_i32;gather_i32;scatter_i32;widen_add_i16_i32;convert_f32_i32;strided_load_f32" CACHE STRING "Semicolon-separated list of benchmarks to build")
+set(RVV_BENCHMARKS "vector_add_f32;mul_f32;saxpy_f32;reduce_sum_f32;mask_select_i32;slide1down_i32;gather_i32;scatter_i32;widen_add_i16_i32;convert_f32_i32;strided_load_f32" CACHE STRING "Semicolon-separated list of benchmarks to build")
 
 set(RVV_COMMON_FLAGS
   -O${RVV_OPT_LEVEL}

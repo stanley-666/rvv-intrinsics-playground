@@ -1,6 +1,6 @@
 /*
- * Demonstrates fused multiply-accumulate on float32 vectors.
- * Computes out = alpha * x + y with the same loop skeleton as vector_add_f32.
+ * Demonstrates pointwise floating-point multiply.
+ * Each lane computes src_a * src_b and stores the result.
  */
 #include <riscv_vector.h>
 #include <math.h>
@@ -62,54 +62,52 @@ static void print_array_f32(const char *label, const float *src, size_t n) {
   printf("]\n");
 }
 
-static void print_sample(float alpha, const float *x, const float *y, const float *out, size_t n) {
-  printf("alpha=%.2f\n", alpha);
-  print_array_f32("src_x", x, n);
-  print_array_f32("src_y", y, n);
+static void print_sample(const float *a, const float *b, const float *out, size_t n) {
+  print_array_f32("src_a", a, n);
+  print_array_f32("src_b", b, n);
   print_array_f32("dst", out, n);
 }
 
-static void saxpy_scalar(float alpha, const float *x, const float *y, float *out, size_t n) {
+static void mul_scalar(const float *a, const float *b, float *out, size_t n) {
   for (size_t i = 0; i < n; ++i) {
-    out[i] = alpha * x[i] + y[i];
+    out[i] = a[i] * b[i];
   }
 }
 
-static void saxpy_rvv(float alpha, const float *x, const float *y, float *out, size_t n) {
+static void mul_rvv(const float *a, const float *b, float *out, size_t n) {
   size_t i = 0;
   while (i < n) {
     size_t vl = __riscv_vsetvl_e32m1(n - i);
-    vfloat32m1_t vx = __riscv_vle32_v_f32m1(x + i, vl);
-    vfloat32m1_t vy = __riscv_vle32_v_f32m1(y + i, vl);
-    vfloat32m1_t vz = __riscv_vfmacc_vf_f32m1(vy, alpha, vx, vl);
-    __riscv_vse32_v_f32m1(out + i, vz, vl);
+    vfloat32m1_t va = __riscv_vle32_v_f32m1(a + i, vl);
+    vfloat32m1_t vb = __riscv_vle32_v_f32m1(b + i, vl);
+    vfloat32m1_t vc = __riscv_vfmul_vv_f32m1(va, vb, vl);
+    __riscv_vse32_v_f32m1(out + i, vc, vl);
     i += vl;
   }
 }
 
 int main(void) {
-  const float alpha = 2.0f;
-  float x[kLength];
-  float y[kLength];
+  float a[kLength];
+  float b[kLength];
   float out[kLength];
   float golden[kLength];
   uint64_t cycle_start;
   uint64_t cycle_end;
 
-  fill_linear_f32(x, kLength);
-  fill_linear_f32(y, kLength);
+  fill_linear_f32(a, kLength);
+  fill_linear_f32(b, kLength);
 
   cycle_start = read_cycle();
   for (int iter = 0; iter < BENCHMARK_REPEAT; ++iter) {
-    saxpy_rvv(alpha, x, y, out, kLength);
+    mul_rvv(a, b, out, kLength);
   }
   cycle_end = read_cycle();
-  saxpy_scalar(alpha, x, y, golden, kLength);
+  mul_scalar(a, b, golden, kLength);
 
-  print_result_header("saxpy_f32", kLength);
+  print_result_header("mul_f32", kLength);
   print_cycle_stats(cycle_end - cycle_start);
-  print_sample(alpha, x, y, out, kLength);
-  if (!check_close_f32(out, golden, kLength, 1e-4f)) {
+  print_sample(a, b, out, kLength);
+  if (!check_close_f32(out, golden, kLength, 1e-5f)) {
     puts("status=FAIL");
     return 1;
   }

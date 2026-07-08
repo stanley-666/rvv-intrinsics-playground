@@ -36,6 +36,7 @@ The goal is not to hide the toolchain details. This repo keeps the build flow ex
 ## Current Benchmarks
 
 - `vector_add_f32`: basic vector load, add, store
+- `mul_f32`: basic vector load, multiply, store
 - `saxpy_f32`: fused multiply-add style kernel `alpha * x + y`
 - `reduce_sum_f32`: vector reduction into one scalar
 - `mask_select_i32`: compare + mask + merge
@@ -53,12 +54,13 @@ These are small correctness-oriented kernels. They repeat the operator many time
 If someone is new to this repo, the recommended order is:
 
 1. Start from `vector_add_f32`. It is the smallest load -> compute -> store example and is the first benchmark to read.
-2. Then read `saxpy_f32`. It keeps the same loop skeleton, but changes the compute step into a fused multiply-accumulate.
-3. Read `reduce_sum_f32` after that. This is the first example where the result is not another vector array, but one reduced scalar.
-4. After those three, move to `mask_select_i32`, `slide1down_i32`, `gather_i32`, and `scatter_i32` for control-style and data-movement style intrinsics.
-5. Then read `widen_add_i16_i32`, `convert_f32_i32`, and `strided_load_f32` for type-conversion, widening, and memory-pattern examples.
-6. After the code shape is familiar, use `docs/v-intrinsic-spec.pdf` to look up exact intrinsic names and signatures.
-7. Use `docs/riscv-v-spec-1.0.pdf` when you want the ISA-level meaning of `vl`, element width, LMUL, reduction behavior, and vector-length-agnostic execution.
+2. Then read `mul_f32`. It keeps the same loop skeleton as add, but changes the operator to pointwise multiply.
+3. Then read `saxpy_f32`. It keeps the same loop skeleton again, but changes the compute step into a fused multiply-accumulate.
+4. Read `reduce_sum_f32` after that. This is the first example where the result is not another vector array, but one reduced scalar.
+5. After those four, move to `mask_select_i32`, `slide1down_i32`, `gather_i32`, and `scatter_i32` for control-style and data-movement style intrinsics.
+6. Then read `widen_add_i16_i32`, `convert_f32_i32`, and `strided_load_f32` for type-conversion, widening, and memory-pattern examples.
+7. After the code shape is familiar, use `docs/v-intrinsic-spec.pdf` to look up exact intrinsic names and signatures.
+8. Use `docs/riscv-v-spec-1.0.pdf` when you want the ISA-level meaning of `vl`, element width, LMUL, reduction behavior, and vector-length-agnostic execution.
 
 That order matters. `vector_add_f32` is the benchmark that should be treated as the first walkthrough target in this repo.
 
@@ -68,6 +70,7 @@ This repo now treats the following as the core starter-set of RVV intrinsic clas
 
 - Load/store: `vector_add_f32`
 - Floating arithmetic: `vector_add_f32`
+- Floating multiply: `mul_f32`
 - Fused multiply-accumulate: `saxpy_f32`
 - Reduction: `reduce_sum_f32`
 - Compare/mask/merge: `mask_select_i32`

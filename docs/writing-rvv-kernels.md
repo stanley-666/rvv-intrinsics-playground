@@ -9,21 +9,23 @@ Do not open the benchmarks in random order.
 Recommended order:
 
 1. `benchmarks/vector_add_f32/main.c`
-2. `benchmarks/saxpy_f32/main.c`
-3. `benchmarks/reduce_sum_f32/main.c`
-4. `benchmarks/mask_select_i32/main.c`
-5. `benchmarks/slide1down_i32/main.c`
-6. `benchmarks/gather_i32/main.c`
-7. `benchmarks/scatter_i32/main.c`
-8. `benchmarks/widen_add_i16_i32/main.c`
-9. `benchmarks/convert_f32_i32/main.c`
-10. `benchmarks/strided_load_f32/main.c`
+2. `benchmarks/mul_f32/main.c`
+3. `benchmarks/saxpy_f32/main.c`
+4. `benchmarks/reduce_sum_f32/main.c`
+5. `benchmarks/mask_select_i32/main.c`
+6. `benchmarks/slide1down_i32/main.c`
+7. `benchmarks/gather_i32/main.c`
+8. `benchmarks/scatter_i32/main.c`
+9. `benchmarks/widen_add_i16_i32/main.c`
+10. `benchmarks/convert_f32_i32/main.c`
+11. `benchmarks/strided_load_f32/main.c`
 
 Why this order:
 
 - `vector_add_f32` is the first benchmark because it is the cleanest introduction to `vsetvl`, vector load, one arithmetic intrinsic, and vector store.
-- `saxpy_f32` should be second because the loop skeleton is almost the same, so the reader can focus on how the compute intrinsic changes.
-- `reduce_sum_f32` should be third because reduction is conceptually harder: the output is one scalar, not one vector buffer.
+- `mul_f32` should be second because it changes only the arithmetic operator and keeps the rest of the loop structure familiar.
+- `saxpy_f32` should be third because the loop skeleton is still almost the same, so the reader can focus on how fused multiply-accumulate differs from plain multiply.
+- `reduce_sum_f32` should be fourth because reduction is conceptually harder: the output is one scalar, not one vector buffer.
 - `mask_select_i32`, `slide1down_i32`, `gather_i32`, and `scatter_i32` are the next layer because they introduce masks and data movement instead of only arithmetic.
 - `widen_add_i16_i32`, `convert_f32_i32`, and `strided_load_f32` are later because they mix element-width changes, conversion semantics, and non-unit-stride memory access.
 
@@ -37,6 +39,7 @@ When reading the code together with the official references in this repo:
 This repo uses one benchmark per core starter class:
 
 - load/store plus basic arithmetic: `vector_add_f32`
+- pointwise multiply: `mul_f32`
 - fused multiply-accumulate: `saxpy_f32`
 - reduction: `reduce_sum_f32`
 - compare/mask/merge: `mask_select_i32`

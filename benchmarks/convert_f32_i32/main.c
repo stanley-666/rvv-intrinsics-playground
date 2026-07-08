@@ -7,8 +7,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-enum { kLength = 128 };
-enum { kPrintCount = 8 };
+enum { kLength = 16 };
+enum { kPrintCount = 16 };
 
 static size_t current_vlen_bytes(void) { return __riscv_vlenb(); }
 
