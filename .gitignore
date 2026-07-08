@@ -1,0 +1,9 @@
+build*/
+benchmarks/*/CMakeCache.txt
+benchmarks/*/cmake_install.cmake
+benchmarks/*/Makefile
+benchmarks/*/CMakeFiles/
+benchmarks/*/_root_build/
+benchmarks/*/vector_add_f32
+benchmarks/*/saxpy_f32
+benchmarks/*/reduce_sum_f32
