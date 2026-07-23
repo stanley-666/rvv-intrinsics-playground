@@ -13,10 +13,18 @@ JOBS="${JOBS:-$(nproc)}"
 install_prereqs() {
   sudo apt-get update
   sudo apt-get install -y \
-    autoconf automake autotools-dev curl python3 python3-pip python3-tomli \
+    autoconf automake autotools-dev curl python3 python3-pip \
     libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex \
     texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev \
     ninja-build git cmake libglib2.0-dev libslirp-dev libncurses-dev
+
+  if ! python3 -c 'import tomli' >/dev/null 2>&1; then
+    if apt-cache show python3-tomli >/dev/null 2>&1; then
+      sudo apt-get install -y python3-tomli
+    else
+      python3 -m pip install --user tomli
+    fi
+  fi
 }
 
 check_existing_toolchain() {

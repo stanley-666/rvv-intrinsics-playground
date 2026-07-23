@@ -21,10 +21,17 @@ make
 The same README also lists Ubuntu prerequisites:
 
 ```bash
-sudo apt-get install autoconf automake autotools-dev curl python3 python3-pip python3-tomli \
+sudo apt-get install autoconf automake autotools-dev curl python3 python3-pip \
   libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool \
   patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev libslirp-dev \
   libncurses-dev
+```
+
+The toolchain also needs the Python `tomli` module. On releases where
+`python3-tomli` is unavailable (including Ubuntu 20.04), install it with:
+
+```bash
+python3 -m pip install --user tomli
 ```
 
 After installation, make sure the cross compiler is in `PATH`:
